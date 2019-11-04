@@ -475,6 +475,7 @@ module gamempniuniu.page {
         private _curIndex: number = 0;
         private ranEffPos(): void {
             if (!this._game.mainScene || !this._game.mainScene.camera) return;
+            if (!this._bankerList.length) return;
             if (this._curIndex >= this._bankerList.length) {
                 this._curIndex = 0;
             }
@@ -482,12 +483,15 @@ module gamempniuniu.page {
             let posX = this._game.mainScene.camera.getScenePxByCellX(this._playerList[randIndex].x + this._playerList[randIndex].view_icon.x - 26);
             let posY = this._game.mainScene.camera.getScenePxByCellY(this._playerList[randIndex].y + this._playerList[randIndex].view_icon.y - 23);
             this._kuangView.pos(posX, posY);
-            this._game.playSound(Path_game_mpniuniu.music_mpniuniu + "suiji.mp3", false);
+            this._game.playSound(Path_game_rniuniu.music_niuniu + "suiji.mp3", false);
             if (randIndex == this._bankerIndex) {
                 if (this._count >= 2000) {
-                    this._game.playSound(Path_game_mpniuniu.music_mpniuniu + "suidao.mp3", false);
-                    this._playerList[this._bankerIndex].view_icon.img_banker.visible = true;
-                    this._playerList[this._bankerIndex].view_icon.img_banker.ani1.play(0, false);
+                    this._kuangView.ani1.play(0, false)
+                    Laya.timer.once(1000, this, () => {
+                        this._game.playSound(Path_game_rniuniu.music_niuniu + "suidao.mp3", false);
+                        this._playerList[this._bankerIndex].view_icon.img_banker.visible = true;
+                        this._playerList[this._bankerIndex].view_icon.img_banker.ani1.play(0, false);
+                    })
                     Laya.timer.clear(this, this.ranEffPos);
                     return;
                 }
@@ -890,6 +894,8 @@ module gamempniuniu.page {
             this._curStatus = this._niuMapInfo.GetMapState();
             this._viewUI.btn_continue.visible = this._curStatus == MAP_STATUS.PLAY_STATUS_SHOW_GAME;
             this._viewUI.box_bankerRate.visible = this._curStatus == MAP_STATUS.PLAY_STATUS_GET_BANKER;
+            this._viewUI.btn_tanpai.visible = this._curStatus == MAP_STATUS.PLAY_STATUS_TANPAI;
+            this._viewUI.box_betRate.visible = this._curStatus == MAP_STATUS.PLAY_STATUS_BET;
             if (this._curStatus == MAP_STATUS.PLAY_STATUS_SET_BANKER || this._curStatus == MAP_STATUS.PLAY_STATUS_GAME_START || this._curStatus == MAP_STATUS.PLAY_STATUS_PUSH_THREE
                 || this._curStatus == MAP_STATUS.PLAY_STATUS_PUSH_TWO || this._curStatus == MAP_STATUS.PLAY_STATUS_COMPARE || this._curStatus == MAP_STATUS.PLAY_STATUS_SETTLE
                 || this._curStatus == MAP_STATUS.PLAY_STATUS_GAME_SHUFFLE) {
@@ -925,8 +931,6 @@ module gamempniuniu.page {
                     break;
                 case MAP_STATUS.PLAY_STATUS_PUSH_THREE:// 发3张阶段
                     this._viewUI.paixie.ani2.play(0, true);
-                    this._viewUI.box_bankerRate.visible = false;
-                    this._viewUI.box_betRate.visible = false;
                     this._viewUI.box_tips.visible = false;
                     break;
                 case MAP_STATUS.PLAY_STATUS_GET_BANKER:// 开始抢庄
@@ -956,17 +960,13 @@ module gamempniuniu.page {
                     break;
                 case MAP_STATUS.PLAY_STATUS_PUSH_THREE:// 发2张阶段
                     this._viewUI.paixie.ani2.play(0, true);
-                    this._viewUI.box_bankerRate.visible = false;
-                    this._viewUI.box_betRate.visible = false;
                     this._viewUI.box_tips.visible = false;
                     break;
                 case MAP_STATUS.PLAY_STATUS_TANPAI:// 摊牌阶段
-                    this._viewUI.btn_tanpai.visible = true;
                     this._niuMgr.isReKaiPai = false;
                     break;
                 case MAP_STATUS.PLAY_STATUS_COMPARE:// 比牌阶段
                     this._viewUI.txt_status.text = "比牌中";
-                    this._viewUI.btn_tanpai.visible = false;
                     this._viewUI.box_tips.visible = false;
                     break;
                 case MAP_STATUS.PLAY_STATUS_SETTLE:// 结算阶段

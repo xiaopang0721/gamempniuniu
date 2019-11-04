@@ -124,7 +124,7 @@ module gamempniuniu.story {
 				case MAP_STATUS.PLAY_STATUS_BET:// 下注阶段
 					this._isFaPai = 0;
 					break;
-				case MAP_STATUS.PLAY_STATUS_PUSH_THREE:// 发2张阶段
+				case MAP_STATUS.PLAY_STATUS_PUSH_TWO:// 发2张阶段
 					this.dealCards2();
 					break;
 				case MAP_STATUS.PLAY_STATUS_TANPAI:// 摊牌阶段
@@ -164,7 +164,7 @@ module gamempniuniu.story {
 				let mainCards = this._game.sceneObjectMgr.mainPlayer.playerInfo.cards;
 				if (unit) {
 					if (unit.GetIndex() == idx) {
-						cards = cards.concat(mainCards.slice(0, 2));
+						cards = cards.concat(mainCards);
 					} else {
 						cards = cards.concat([0, 0, 0]);
 					}
@@ -212,6 +212,7 @@ module gamempniuniu.story {
 			if (!this._niuMapInfo) return;
 			let mainUnit: Unit = this._game.sceneObjectMgr.mainUnit;
 			if (!mainUnit || !mainUnit.GetIndex()) return;
+			if (!this._isReConnected) return;
 			if (this._isFaPai > 0) return;
 			let status = this._niuMapInfo.GetMapState();
 			let idx = this._game.sceneObjectMgr.mainUnit.GetIndex();
