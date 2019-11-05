@@ -27,22 +27,19 @@ module gamempniuniu.manager {
 		RATE_4 = 4, //牛牛以上		4倍
 	}
 
+
 	export class MpniuniuMgr extends gamecomponent.managers.PlayingCardMgrBase<MpniuniuData>{
 		static readonly MAPINFO_OFFLINE: string = "NiuMgr.MAPINFO_OFFLINE";//假精灵
 		static readonly DEAL_OVER: string = "NiuMgr.DEAL_OVER";//发牌结束
-		static readonly WXSHARE_TITLE: string = "抢庄牛牛]房号:{0}";	// 分享标题
-		static readonly WXSHARE_DESC: string = "开好房喽,就等你们一起来玩抢庄牛牛啦!晚了位置就没了哟~";	// 分享内容
-
-		static readonly MIN_CARD_SEATS_COUNT: number = 2; // 房卡模式下最小人数
-		static readonly MAX_NUM: number = 5;//最大人数
+		static readonly MAX_SEATS_COUNT = 5; //最大座位数
+		static readonly MAX_CARDS_COUNT = 5; //最大手牌数
 
 		private _bankerIndex: number;//庄家位置
-		private _unitIndexOnTable: Array<number>;//精灵位置
 		private _offlineUnit: UnitOffline;//假精灵信息
-		private _isShowOver: boolean = false;
 		private _isReKaiPai: boolean = true;
 		private _isReconnect: boolean = true;
-		private _totalUnitCount: number = 5;	// 玩家数量
+		private _isGaiPai: boolean = false;
+		private _cardsIndex: Array<number> = [];//牌的归属位置
 
 		constructor(game: Game) {
 			super(game)
@@ -63,30 +60,6 @@ module gamempniuniu.manager {
 
 		set isReconnect(v) {
 			this._isReconnect = v;
-		}
-
-		get isReKaiPai() {
-			return this._isReKaiPai;
-		}
-
-		set isReKaiPai(v) {
-			this._isReKaiPai = v;
-		}
-
-		get isShowOver() {
-			return this._isShowOver;
-		}
-
-		set isShowOver(v) {
-			this._isShowOver = v;
-		}
-
-		get totalUnitCount() {
-			return this._totalUnitCount;
-		}
-
-		set totalUnitCount(v: number) {
-			this._totalUnitCount = v;
 		}
 
 		//对牌进行排序
@@ -207,8 +180,8 @@ module gamempniuniu.manager {
 		sort() {
 			let cards = this._cards;//牌堆
 			let idx = this._game.sceneObjectMgr.mainUnit.GetIndex();
-			let max = 5;
 			let mainUnit: Unit = this._game.sceneObjectMgr.mainUnit;
+			let max = MpniuniuMgr.MAX_SEATS_COUNT;
 			let count = 0;
 			for (let index = 0; index < max; index++) {//ui座位
 				let posIdx = (idx + index) % max == 0 ? max : (idx + index) % max;
@@ -227,103 +200,141 @@ module gamempniuniu.manager {
 			}
 		}
 
-		setValue(infos: any) {
-			if (!this._cards.length) return;
-			if (this._isShowOver) return;
-			let mainUnit: Unit = this._game.sceneObjectMgr.mainUnit;
-			if (!mainUnit || !mainUnit.GetIndex()) return;
-			let cards = this._cards;//牌堆
-			let idx = mainUnit.GetIndex();
-			let max = 5;
-			let count = 0;
-			this._unitIndexOnTable = [];
-			for (let index = 0; index < max; index++) {//ui座位
+		//根据实际位置获取精灵在UI上的逻辑位置
+		private getUnitUIPos(_index): number {
+			//主玩家的座位
+			let idx = this._game.sceneObjectMgr.mainUnit.GetIndex();
+			let max = MpniuniuMgr.MAX_SEATS_COUNT;
+			for (let index = 0; index < max; index++) {
 				let posIdx = (idx + index) % max == 0 ? max : (idx + index) % max;
-				let unit = this._game.sceneObjectMgr.getUnitByIdx(posIdx);
-				if (unit) {
-					this._unitIndexOnTable.push(index);
-					for (let i = 0; i < infos.length; i++) {
-						if (unit.GetIndex() == infos[i].SeatIndex) {
-							let _cardsInfo = infos[i].Cards;
-							let _cards = [];
-							for (let k: number = 0; k < _cardsInfo.length; k++) {
-								_cards.push(_cardsInfo[k]);//用新数组存下来，方便调整牌序
-							}
-							let isNiu = this.checkCardsType(_cards);
-							_cards = this.sortCardsToNiu(_cards);
-							for (let j = 0; j < max; j++) {//手牌
-								let card = cards[count * max + j] as MpniuniuData;
-								let _card = _cards[j];
-								if (card) {
-									card.Init(_card.GetVal());
-									card.index = j;
-									card.sortScore = max - j;
-									if (isNiu && j > 2) {
-										if (!card.targe_pos) {
-											card.targe_pos = new Vector2();
-										}
-										card.isFinalPos = false;
-										card.targe_pos.y = card.targe_pos.y + 20;
-									}
-								}
-							}
-							count++;
-						}
-					}
+				let unit = this._game.sceneObjectMgr.getUnitByIdx(posIdx)
+				if (unit && posIdx == _index) {
+					return index;
 				}
 			}
-			this.kaipai();
-			this.moveCard();
-			this._isShowOver = true;
+			return -1;
 		}
 
-		resetValue(infos: any) {
+		setCardsIndex(index: number) {
+			this._cardsIndex.push(this.getUnitUIPos(index));
+		}
+
+		resetCardsIndex() {
+			this._cardsIndex = [];
+			this._isGaiPai = false;
+		}
+
+		setValue(info: any) {
 			if (!this._cards.length) return;
-			if (this._isShowOver) return;
 			let mainUnit: Unit = this._game.sceneObjectMgr.mainUnit;
 			if (!mainUnit || !mainUnit.GetIndex()) return;
-			if (!this._cards.length) return;
 			let cards = this._cards;//牌堆
-			let idx = mainUnit.GetIndex();
+			let mainIndex = mainUnit.GetIndex();
+			let unitnum = this.getPlayerOnSeat();
 			let max = 5;
-			let count = 0;
-			this._unitIndexOnTable = [];
-			for (let index = 0; index < max; index++) {//ui座位
-				let posIdx = (idx + index) % max == 0 ? max : (idx + index) % max;
+			for (let i = 0; i < max; i++) {//ui座位
+				let posIdx = (mainIndex + i) % max == 0 ? max : (mainIndex + i) % max;
 				let unit = this._game.sceneObjectMgr.getUnitByIdx(posIdx);
-				if (unit) {
-					this._unitIndexOnTable.push(index);
-					for (let i = 0; i < infos.length; i++) {
-						if (unit.GetIndex() == infos[i].SeatIndex) {
-							let _cardsInfo = infos[i].Cards;
-							let _cards = [];
-							for (let k: number = 0; k < _cardsInfo.length; k++) {
-								_cards.push(_cardsInfo[k]);//用新数组存下来，方便调整牌序
-							}
-							let isNiu = this.checkCardsType(_cards);
-							_cards = this.sortCardsToNiu(_cards);
-							for (let j = 0; j < max; j++) {//手牌
-								let card = cards[count * max + j] as MpniuniuData;
-								let _card = _cards[j];
-								card.Init(_card.GetVal());
-								card.index = j;
-								card.sortScore = max - j;
-								if (isNiu && j > 2) {
-									if (!card.targe_pos) {
-										card.targe_pos = new Vector2();
-									}
-									card.isFinalPos = false;
-									card.targe_pos.y = card.targe_pos.y + 20;
+				if (unit && unit.GetIndex() == info.SeatIndex) {
+					let _cardsInfo = info.Cards;
+					let _cards = [];
+					for (let k: number = 0; k < _cardsInfo.length; k++) {
+						_cards.push(_cardsInfo[k]);//用新数组存下来，方便调整牌序
+					}
+					let isNiu = this.checkCardsType(_cards);
+					let uiPos = this._cardsIndex.indexOf(this.getUnitUIPos(unit.GetIndex()));
+					_cards = this.sortCardsToNiu(_cards);
+					for (let j = 0; j < max; j++) {//手牌
+						let card: MpniuniuData;
+						if (j < 3) {
+							card = this._cards[uiPos * 3 + j] as MpniuniuData;
+						} else {
+							card = this._cards[unitnum * 3 + uiPos * 2 + (j - 3)] as MpniuniuData;
+						}
+						let _card = _cards[j];
+						if (card) {
+							card.Init(_card.GetVal());
+							card.index = j;
+							card.sortScore = max - j;
+							if (isNiu && j > 2) {
+								if (!card.targe_pos) {
+									card.targe_pos = new Vector2();
 								}
+								card.isFinalPos = false;
+								card.targe_pos.y = card.targe_pos.y + 20;
 							}
-							count++;
 						}
 					}
+					this.kaipai(uiPos);
+					this.moveCard(uiPos);
 				}
 			}
-			this.rekaipai();
-			this.removeCard();
-			this._isShowOver = true;
+		}
+
+		// resetValue(infos: any) {
+		// 	if (!this._cards.length) return;
+		// 	if (this._isShowOver) return;
+		// 	let mainUnit: Unit = this._game.sceneObjectMgr.mainUnit;
+		// 	if (!mainUnit || !mainUnit.GetIndex()) return;
+		// 	if (!this._cards.length) return;
+		// 	let cards = this._cards;//牌堆
+		// 	let idx = mainUnit.GetIndex();
+		// 	let unitnum = this.getPlayerOnSeat();
+		// 	let max = 5;
+		// 	let count = 0;
+		// 	this._unitIndexOnTable = [];
+		// 	for (let index = 0; index < max; index++) {//ui座位
+		// 		let posIdx = (idx + index) % max == 0 ? max : (idx + index) % max;
+		// 		let unit = this._game.sceneObjectMgr.getUnitByIdx(posIdx);
+		// 		if (unit) {
+		// 			this._unitIndexOnTable.push(index);
+		// 			for (let i = 0; i < infos.length; i++) {
+		// 				if (unit.GetIndex() == infos[i].SeatIndex) {
+		// 					let _cardsInfo = infos[i].Cards;
+		// 					let _cards = [];
+		// 					for (let k: number = 0; k < _cardsInfo.length; k++) {
+		// 						_cards.push(_cardsInfo[k]);//用新数组存下来，方便调整牌序
+		// 					}
+		// 					let isNiu = this.checkCardsType(_cards);
+		// 					_cards = this.sortCardsToNiu(_cards);
+		// 					for (let j = 0; j < max; j++) {//手牌
+		// 						let card: MpniuniuData;
+		// 						if (j < 3) {
+		// 							card = cards[unitnum * 3 + count * 2 + (j - 3)] as MpniuniuData;
+		// 						} else {
+		// 							card = cards[unitnum * 3 + count * 2 + (j - 3)] as MpniuniuData;
+		// 						}
+		// 						let _card = _cards[j];
+		// 						card.Init(_card.GetVal());
+		// 						card.index = j;
+		// 						card.sortScore = max - j;
+		// 						if (isNiu && j > 2) {
+		// 							if (!card.targe_pos) {
+		// 								card.targe_pos = new Vector2();
+		// 							}
+		// 							card.isFinalPos = false;
+		// 							card.targe_pos.y = card.targe_pos.y + 20;
+		// 						}
+		// 					}
+		// 					count++;
+		// 				}
+		// 			}
+		// 		}
+		// 	}
+		// 	this.rekaipai();
+		// 	this.removeCard();
+		// 	this._isShowOver = true;
+		// }
+
+		private getPlayerOnSeat(): number {
+			let unitNum = 0
+			for (let index = 0; index < 5; index++) {
+				let unit = this._game.sceneObjectMgr.getUnitByIdx(index + 1)
+				if (unit) {
+					unitNum++;
+				}
+			}
+			return unitNum;
 		}
 
 		sortCardsToNiu(cards): Array<MpniuniuData> {
@@ -380,20 +391,28 @@ module gamempniuniu.manager {
 			return newCards;
 		}
 
+		/****************正常流程 专用方法*****************/
 		//发2张
-		fapai2(vals: number[], create_fun: Handler, mainIdx: number, ownerIdx: number) {
+		fapai2(vals: number[], create_fun: Handler, mainIdx: number, ownerIdx: number, count: number, unitCount: number) {
 			for (let i = 0; i < vals.length; i++) {
 				let card: MpniuniuData;
 				card = create_fun.run();
 				this._cards.push(card)
 				card.Init(vals[i]);
-				card.sortScore = -3 - i;
+				card.sortScore = 2 - i;
 				card.myOwner(ownerIdx, mainIdx == ownerIdx, mainIdx, 3 + i);
-				card && card.fapai();
+				Laya.timer.once(150 * count + i * unitCount * 150, this, () => {
+					card && card.fapai();
+				});
+				if (mainIdx == ownerIdx) {
+					Laya.timer.once(300 + i * unitCount * 150, this, () => {
+						card && card.fanpai();
+					});
+				}
 			}
 		}
 
-		//发牌
+		//发3张
 		fapai() {
 			let count = 0;
 			let counter = 0;
@@ -414,12 +433,104 @@ module gamempniuniu.manager {
 			}
 		}
 
-		//断线重连，重新发牌(主玩家大牌)
-		refapai() {
-			for (let i: number = 0; i < this._cards.length; i++) {
-				let card = this._cards[i];
+		//盖牌(主玩家放到桌上变小牌)
+		gaipai() {
+			let unitnum = this.getPlayerOnSeat();
+			if (this._isGaiPai) return;
+			for (let i: number = 0; i < 5; i++) {
+				let card: MpniuniuData;
+				if (i < 3) {
+					card = this._cards[i] as MpniuniuData;
+				} else {
+					card = this._cards[unitnum * 3 + (i - 3)] as MpniuniuData;
+				}
 				if (!card) return;
-				card.refapai();
+				card.yipai();
+			}
+			this._isGaiPai = true;
+		}
+
+		//翻牌
+		fanpai() {
+			Laya.timer.once(150 * this._cards.length, this, () => {
+				for (let i: number = 0; i < 3; i++) {
+					let card = this._cards[i];
+					if (!card) return;
+					card.fanpai();
+				}
+			});
+		}
+
+		//开牌
+		kaipai(index: number) {
+			let unitnum = this.getPlayerOnSeat();
+			for (let i = 0; i < 5; i++) {
+				let card: MpniuniuData;
+				if (i < 3) {
+					card = this._cards[index * 3 + i] as MpniuniuData;
+				} else {
+					card = this._cards[unitnum * 3 + index * 2 + (i - 3)] as MpniuniuData;
+				}
+				if (!card) return;
+				card.fanpai();
+			}
+		}
+
+		// //摊牌
+		// tanpai(index: number) {
+		// 	let unitnum = this.getPlayerOnSeat();
+		// 	for (let i = 0; i < 5; i++) {
+		// 		let card: MpniuniuData;
+		// 		if (i < 3) {
+		// 			card = this._cards[index * 3 + i] as MpniuniuData;
+		// 		} else {
+		// 			card = this._cards[unitnum * 3 + index * 3 + (i - 3)] as MpniuniuData;
+		// 		}
+		// 		if (!card) return;
+		// 		card.kaipai();
+		// 	}
+		// }
+
+		//牛牌最后两张向下移动
+		moveCard(index: number) {
+			let unitnum = this.getPlayerOnSeat();
+			Laya.timer.once(500, this, () => {
+				for (let i = 0; i < 5; i++) {
+					let card: MpniuniuData;
+					if (i < 3) {
+						card = this._cards[index * 3 + i] as MpniuniuData;
+					} else {
+						card = this._cards[unitnum * 3 + index * 2 + (i - 3)] as MpniuniuData;
+					}
+					if (!card) return;
+					card.moveCard();
+				}
+			})
+		}
+
+		// 清理指定玩家卡牌对象
+		clearCardObject(index: number): void {
+			this._game.sceneObjectMgr.ForEachObject((obj: any) => {
+				if (obj instanceof MpniuniuData) {
+					if (obj.GetOwnerIdx() == index) {
+						this._game.sceneObjectMgr.clearOfflineObject(obj);
+					}
+				}
+			})
+		}
+
+		/****************断线重连 专用方法*****************/
+		//断线重连后发2张
+		refapai2(vals: number[], create_fun: Handler, mainIdx: number, ownerIdx: number, count: number, unitCount: number) {
+			for (let i = 0; i < vals.length; i++) {
+				let card: MpniuniuData;
+				card = create_fun.run();
+				this._cards.push(card)
+				card.Init(vals[i]);
+				card.sortScore = 2 - i;
+				card.myOwner(ownerIdx, mainIdx == ownerIdx, mainIdx, 3 + i);
+				card && card.refapai();
+				card && card.fanpai();
 			}
 		}
 
@@ -432,113 +543,13 @@ module gamempniuniu.manager {
 			}
 		}
 
-		//盖牌
-		gaipai() {
-			for (let i: number = 0; i < 5; i++) {
-				let card = this._cards[i];
-				if (!card) return;
-				card.yipai();
-				card.gaipai();
-			}
-		}
-
-		//翻牌
-		fanpai() {
-			Laya.timer.once(150 * this._cards.length, this, () => {
-				for (let i: number = 0; i < 5; i++) {
-					let card = this._cards[i];
-					if (!card) return;
-					card.fanpai();
-				}
-			});
-		}
-
-		//翻牌(断线重连后)
-		reloadFanpai() {
-			let count = 0;
+		//断线重连，重新发牌(主玩家大牌)
+		refapai() {
 			for (let i: number = 0; i < this._cards.length; i++) {
 				let card = this._cards[i];
 				if (!card) return;
-				card.fanpai();
+				card.refapai();
 			}
-
-		}
-
-		//开牌
-		kaipai() {
-			//获取庄家下一家的逻辑位置，即为第一个开牌的位置
-			let begin = this._unitIndexOnTable.indexOf(this._bankerIndex) + 1;
-			let len = this._unitIndexOnTable.length;
-			begin = begin >= len ? 0 : begin;
-			let cardLen = this._cards.length / 5;
-			for (let i = 0; i < cardLen; i++) {
-				let index = begin + i >= cardLen ? begin + i - cardLen : begin + i;
-
-				Laya.timer.once(500 + i * 1000, this, () => {
-					for (let j = 0; j < 5; j++) {
-						let card = this._cards[5 * index + j];
-						if (!card) return;
-						card.fanpai();
-					}
-				})
-			}
-		}
-
-		//断线重连开牌
-		rekaipai() {
-			for (let i = 0; i < this._cards.length; i++) {
-				let card = this._cards[i];
-				if (!card) return;
-				card.kaipai();
-			}
-		}
-
-		//牛牌最后两张向下移动
-		moveCard() {
-			//获取庄家下一家的逻辑位置，即为第一个开牌的位置
-			let begin = this._unitIndexOnTable.indexOf(this._bankerIndex) + 1;
-			let len = this._unitIndexOnTable.length;
-			begin = begin >= len ? 0 : begin;
-			let cardLen = this._cards.length / 5;
-			for (let i = 0; i < cardLen; i++) {
-				let index = begin + i >= cardLen ? begin + i - cardLen : begin + i;
-
-				Laya.timer.once(500 + i * 1000, this, () => {
-					for (let j = 0; j < 5; j++) {
-						let card = this._cards[5 * index + j];
-						if (!card) return;
-						card.moveCard();
-					}
-				})
-			}
-		}
-
-		//牛牌最后两张向下移动（断线重连）
-		removeCard() {
-			//获取庄家下一家的逻辑位置，即为第一个开牌的位置
-			let begin = this._unitIndexOnTable.indexOf(this._bankerIndex) + 1;
-			let len = this._unitIndexOnTable.length;
-			begin = begin >= len ? 0 : begin;
-			let cardLen = this._cards.length / 5;
-			for (let i = 0; i < cardLen; i++) {
-				let index = begin + i >= cardLen ? begin + i - cardLen : begin + i;
-				for (let j = 0; j < 5; j++) {
-					let card = this._cards[5 * index + j];
-					if (!card) return;
-					card.moveCard();
-				}
-			}
-		}
-
-		// 清理指定玩家卡牌对象
-		clearCardObject(index: number): void {
-			this._game.sceneObjectMgr.ForEachObject((obj: any) => {
-				if (obj instanceof MpniuniuData) {
-					if (obj.GetOwnerIdx() == index) {
-						this._game.sceneObjectMgr.clearOfflineObject(obj);
-					}
-				}
-			})
 		}
 	}
 }

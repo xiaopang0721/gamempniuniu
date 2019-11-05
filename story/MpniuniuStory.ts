@@ -23,7 +23,8 @@ module gamempniuniu.story {
 		private _bankerIndex: number;
 		private _niuMapInfo: MpniuniuMapInfo;
 		private _curStatus: number;
-		private _isGaiPai: boolean = false;
+		private _isFanPai: boolean;
+		private _infoList: Array<any> = [];
 
 		constructor(v: Game, mapid: string, maplv: number) {
 			super(v, mapid, maplv);
@@ -45,14 +46,6 @@ module gamempniuniu.story {
 
 		get isFaPai() {
 			return this._isFaPai;
-		}
-
-		get isGaiPai() {
-			return this._isGaiPai;
-		}
-
-		set isGaiPai(v) {
-			this._isGaiPai = v;
 		}
 
 		init() {
@@ -110,7 +103,7 @@ module gamempniuniu.story {
 
 					break;
 				case MAP_STATUS.PLAY_STATUS_GAME_START:// 游戏开始
-
+					this._isFaPai = 0;
 					break;
 				case MAP_STATUS.PLAY_STATUS_PUSH_THREE:// 发3张阶段
 					this.dealCards3();
@@ -122,20 +115,14 @@ module gamempniuniu.story {
 
 					break;
 				case MAP_STATUS.PLAY_STATUS_BET:// 下注阶段
-					this._isFaPai = 0;
 					break;
 				case MAP_STATUS.PLAY_STATUS_PUSH_TWO:// 发2张阶段
-					this.dealCards2();
+					this.dealCards2(false);
 					break;
 				case MAP_STATUS.PLAY_STATUS_TANPAI:// 摊牌阶段
-					this._niuMgr.isReKaiPai = false;
 					break;
 				case MAP_STATUS.PLAY_STATUS_COMPARE:// 比牌阶段
-					if (!this.isGaiPai) {
-						this._niuMgr.gaipai();
-						this.isGaiPai = true;
-					}
-					this._niuMgr.isShowOver = false;
+					this._niuMgr.gaipai();
 					break;
 				case MAP_STATUS.PLAY_STATUS_SETTLE:// 结算阶段
 
@@ -144,7 +131,9 @@ module gamempniuniu.story {
 
 					break;
 				case MAP_STATUS.PLAY_STATUS_SHOW_GAME:// 本局展示阶段
-					this.isGaiPai = false;
+					this._isFaPai = 0;
+					this._index = 0;
+					this._niuMgr.resetCardsIndex();
 					break;
 			}
 		}
@@ -168,6 +157,7 @@ module gamempniuniu.story {
 					} else {
 						cards = cards.concat([0, 0, 0]);
 					}
+					this._niuMgr.setCardsIndex(unit.GetIndex());
 				}
 			}
 			let handle = new Handler(this, this.createObj);
@@ -179,14 +169,15 @@ module gamempniuniu.story {
 		}
 
 		//发2张
-		private dealCards2(): void {
+		private dealCards2(isReConnected: boolean): void {
 			if (!this._niuMapInfo) return;
 			let mainUnit = this._game.sceneObjectMgr.mainUnit;
 			if (!mainUnit || !mainUnit.GetIndex()) return;
-			if (this._isFaPai >= 3) return;
+			if (this._isFaPai > 1) return;
 			let idx = mainUnit.GetIndex();
 			let max = 5;
 			let cards = [];
+			let count = 0;
 			for (let index = 0; index < max; index++) {
 				let posIdx = (idx + index) % max == 0 ? max : (idx + index) % max;
 				let unit = this._game.sceneObjectMgr.getUnitByIdx(posIdx);
@@ -196,15 +187,20 @@ module gamempniuniu.story {
 						this._bankerIndex = index;
 					}
 					if (unit.GetIndex() == idx) {
-						cards = mainCards.splice(3, 4);
+						cards = mainCards.slice(3, 5);
 					} else {
 						cards = [0, 0];
 					}
+					let handle = new Handler(this, this.createObj);
+					if (isReConnected) {
+						this._niuMgr.refapai2(cards, handle, idx, posIdx, count, this.getPlayerOnSeat());
+					} else {
+						this._niuMgr.fapai2(cards, handle, idx, posIdx, count, this.getPlayerOnSeat());
+					}
+					count++;
 				}
-				let handle = new Handler(this, this.createObj);
-				this._niuMgr.fapai2(cards, handle, idx, posIdx);
 			}
-			this._isFaPai = 3;
+			this._isFaPai = 2;
 		}
 
 		//断线重连,重发下牌
@@ -225,12 +221,17 @@ module gamempniuniu.story {
 					let mainCards = this._game.sceneObjectMgr.mainPlayer.playerInfo.cards;
 					if (unit) {
 						if (unit.GetIndex() == idx) {
-							cards = cards.concat(mainCards.slice(0, 2));
+							cards = cards.concat(mainCards);
 						} else {
 							cards = cards.concat([0, 0, 0]);
 						}
+						this._niuMgr.setCardsIndex(unit.GetIndex());
 					}
 				}
+				let handle = new Handler(this, this.createObj);
+				this._niuMgr.Init(cards, handle);
+				this._niuMgr.sort();
+				this._isFaPai = 1;
 			} else if (status >= MAP_STATUS.PLAY_STATUS_PUSH_TWO) {
 				for (let index = 0; index < max; index++) {
 					let posIdx = (idx + index) % max == 0 ? max : (idx + index) % max;
@@ -238,46 +239,53 @@ module gamempniuniu.story {
 					let mainCards = this._game.sceneObjectMgr.mainPlayer.playerInfo.cards;
 					if (unit) {
 						if (unit.GetIndex() == idx) {
-							cards = cards.concat(mainCards);
+							cards = cards.concat(mainCards.slice(0, 3));
 						} else {
-							cards = cards.concat([0, 0, 0, 0, 0]);
+							cards = cards.concat([0, 0, 0]);
 						}
+						this._niuMgr.setCardsIndex(unit.GetIndex());
 					}
 				}
+				let handle = new Handler(this, this.createObj);
+				this._niuMgr.Init(cards, handle);
+				this._niuMgr.sort();
+				this.dealCards2(true);
+				this._isFaPai = 2;
 			}
-			let handle = new Handler(this, this.createObj);
-			this._niuMgr.Init(cards, handle);
-			this._niuMgr.sort();
 			if (status > MAP_STATUS.PLAY_STATUS_TANPAI) {
 				this._niuMgr.regaipai();
 			} else {
 				this._niuMgr.refapai();
 			}
-			this._niuMgr.reloadFanpai();
-			this._isFaPai = 2;
 		}
 
 		//战斗结构体 出牌
+		private _index: number = 0;
 		private onUpdateBattle(): void {
 			if (!this._niuMapInfo) return;
-			let mainUnit: Unit = this._game.sceneObjectMgr.mainUnit;
-			if (!mainUnit || !mainUnit.GetIndex()) return;
 			let battleInfoMgr = this._niuMapInfo.battleInfoMgr;
 			let unitNum = this.getPlayerOnSeat();
-			let infos = [];
 			for (let i: number = 0; i < battleInfoMgr.info.length; i++) {
 				let info = battleInfoMgr.info[i] as gamecomponent.object.BattleInfoBase;
-				if (info.Type == 3) {//最后出牌动作
-					let info = battleInfoMgr.info[i] as gamecomponent.object.BattleInfoPlayCard<gamecomponent.object.PlayingPuKeCard>;
-					infos.push(info);
+				if (info instanceof gamecomponent.object.BattleInfoPlayCard) {
+					if (i > this._index) {
+						this._infoList.push(info);
+						this._niuMgr.setValue(info);
+						this._index = i;
+					}
 				}
 			}
-			if (infos.length < unitNum) return;
-			if (this._niuMgr.isReKaiPai && this._curStatus > MAP_STATUS.PLAY_STATUS_TANPAI) {
-				this._niuMgr.resetValue(infos);
-			} else {
-				this._niuMgr.setValue(infos);
+		}
+
+		//断线重连,重发翻牌
+		private onUpdateFanPai(): void {
+			if (!this.isReConnected) return;
+			if (!this._infoList.length) return;
+			if (this._isFanPai) return;
+			for (let i = 0; i < this._infoList.length; i++) {
+				this._niuMgr.setValue(this._infoList[i]);
 			}
+			this._isFanPai = true;
 		}
 
 		private getPlayerOnSeat(): number {

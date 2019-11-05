@@ -100,7 +100,7 @@ module gamempniuniu.data {
 			let num: number = 0;
 			for (let i = 0; i < this._battleInfoMgr.users.length; i++) {
 				let user = this._battleInfoMgr.users[i];
-				if (user.name) num++;
+				if (user && user.name) num++;
 			}
 			return num
 		}

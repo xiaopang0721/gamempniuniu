@@ -84,7 +84,8 @@ module gamempniuniu.data {
 			this.pos.y = posY;
 			this.targe_pos.x = posX + this._cardIdx * space;
 			this.targe_pos.y = posY;
-			this.scaleX = -1;
+			this.scaleX = 1;
+			this.isShow = true;
 			this.size = this._b ? 1 : 0.65;
 			this.rotateAngle = Math.PI * 4;
 			super.fapai();
@@ -129,18 +130,13 @@ module gamempniuniu.data {
 			super.fanpai();
 		}
 
-		kaipai() {
-			this.scaleX = 1;
-			this.isShow = true;
-		}
-
 		gaipai() {
 			super.gaipai();
 		}
 
 		moveCard() {
 			this.isFinalPos = false;
-			super.fapai();
+			super.movePai();
 		}
 	}
 }
