@@ -884,7 +884,7 @@ module gamempniuniu.page {
                     this._viewUI.box_betRate.visible = this._bankerIndex != 0;
                     this._viewUI.txt_status.text = "开始下注";
                     break;
-                case MAP_STATUS.PLAY_STATUS_PUSH_THREE:// 发2张阶段
+                case MAP_STATUS.PLAY_STATUS_PUSH_TWO:// 发2张阶段
                     this._viewUI.paixie.ani2.play(0, true);
                     break;
                 case MAP_STATUS.PLAY_STATUS_TANPAI:// 摊牌阶段
