@@ -79,9 +79,10 @@ module gamempniuniu.story {
 			let mapinfo = this._game.sceneObjectMgr.mapInfo;
 			this._niuMapInfo = mapinfo as MpniuniuMapInfo;
 			if (mapinfo) {
+				this.onUpdateBattle();
 				this.onUpdateState();
 				this.onUpdateCardInfo();
-				this.onUpdateBattle();
+				this.onUpdateFanPai();
 			} else {
 				this._niuMgr.offlineUnit = this._offlineUnit;
 			}
@@ -257,6 +258,7 @@ module gamempniuniu.story {
 			} else {
 				this._niuMgr.refapai();
 			}
+			this._niuMgr.reloadFanpai();
 		}
 
 		//战斗结构体 出牌
@@ -279,7 +281,7 @@ module gamempniuniu.story {
 
 		//断线重连,重发翻牌
 		private onUpdateFanPai(): void {
-			if (!this.isReConnected) return;
+			if (!this._isReConnected) return;
 			if (!this._infoList.length) return;
 			if (this._isFanPai) return;
 			for (let i = 0; i < this._infoList.length; i++) {

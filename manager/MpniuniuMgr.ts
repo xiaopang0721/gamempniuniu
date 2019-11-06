@@ -531,7 +531,6 @@ module gamempniuniu.manager {
 				card.sortScore = 2 - i;
 				card.myOwner(ownerIdx, mainIdx == ownerIdx, mainIdx, 3 + i);
 				card && card.refapai();
-				card && card.fanpai();
 			}
 		}
 
@@ -550,6 +549,21 @@ module gamempniuniu.manager {
 				let card = this._cards[i];
 				if (!card) return;
 				card.refapai();
+			}
+		}
+
+		//翻牌(断线重连后)
+		reloadFanpai() {
+			let unitnum = this.getPlayerOnSeat();
+			for (let i: number = 0; i < 5; i++) {
+				let card: MpniuniuData;
+				if (i < 3) {
+					card = this._cards[i] as MpniuniuData;
+				} else {
+					card = this._cards[unitnum * 3 + (i - 3)] as MpniuniuData;
+				}
+				if (!card) return;
+				card.fanpai();
 			}
 		}
 	}
