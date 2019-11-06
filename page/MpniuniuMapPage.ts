@@ -836,6 +836,7 @@ module gamempniuniu.page {
             if (this._curStatus >= MAP_STATUS.PLAY_STATUS_GAME_SHUFFLE) {
                 this._viewUI.paixie.ani_chupai.gotoAndStop(12);
             }
+            this._viewUI.box_tips.visible = false;
             switch (this._curStatus) {
                 case MAP_STATUS.PLAY_STATUS_GAME_NONE:// 准备阶段
                     this.initRoomConfig();
@@ -843,7 +844,6 @@ module gamempniuniu.page {
                 case MAP_STATUS.PLAY_STATUS_GAME_START:// 游戏开始
                     this._pageHandle.pushOpen({ id: MpniuniuPageDef.PAGE_NIUNIU_BEGIN, parent: this._game.uiRoot.HUD });
                     this._game.playSound(Path_game_mpniuniu.music_mpniuniu + "kaishi.mp3", false);
-                    this._viewUI.box_tips.visible = false;
                     break;
                 case MAP_STATUS.PLAY_STATUS_GAME_SHUFFLE:// 洗牌阶段
                     this._pageHandle.pushClose({ id: MpniuniuPageDef.PAGE_NIUNIU_BEGIN, parent: this._game.uiRoot.HUD });
@@ -859,14 +859,12 @@ module gamempniuniu.page {
                     break;
                 case MAP_STATUS.PLAY_STATUS_PUSH_THREE:// 发3张阶段
                     this._viewUI.paixie.ani2.play(0, true);
-                    this._viewUI.box_tips.visible = false;
                     break;
                 case MAP_STATUS.PLAY_STATUS_GET_BANKER:// 开始抢庄
                     this._viewUI.txt_status.text = "开始抢庄";
                     break;
                 case MAP_STATUS.PLAY_STATUS_SET_BANKER:// 定庄阶段
                     this._viewUI.box_bankerRate.visible = false;
-                    this._viewUI.box_tips.visible = false;
                     break;
                 case MAP_STATUS.PLAY_STATUS_BET:// 下注阶段
                     Laya.timer.clear(this, this.ranEffPos);
@@ -888,18 +886,15 @@ module gamempniuniu.page {
                     break;
                 case MAP_STATUS.PLAY_STATUS_PUSH_THREE:// 发2张阶段
                     this._viewUI.paixie.ani2.play(0, true);
-                    this._viewUI.box_tips.visible = false;
                     break;
                 case MAP_STATUS.PLAY_STATUS_TANPAI:// 摊牌阶段
                     this._viewUI.paixie.ani2.gotoAndStop(0);
                     break;
                 case MAP_STATUS.PLAY_STATUS_COMPARE:// 比牌阶段
                     this._viewUI.txt_status.text = "比牌中";
-                    this._viewUI.box_tips.visible = false;
                     break;
                 case MAP_STATUS.PLAY_STATUS_SETTLE:// 结算阶段
                     this._viewUI.txt_status.text = "结算中";
-                    this._viewUI.box_tips.visible = false;
                     this.addBankerWinEff();
                     let timeInternal = MONEY_NUM * MONEY_FLY_TIME;
                     Laya.timer.once(timeInternal, this, () => {

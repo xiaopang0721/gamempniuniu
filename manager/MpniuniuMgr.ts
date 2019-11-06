@@ -402,6 +402,7 @@ module gamempniuniu.manager {
 				card.sortScore = 2 - i;
 				card.myOwner(ownerIdx, mainIdx == ownerIdx, mainIdx, 3 + i);
 				Laya.timer.once(150 * count + i * unitCount * 150, this, () => {
+					this._game.playSound(PathGameTongyong.music_tongyong + "fapai.mp3", false);
 					card && card.fapai();
 				});
 				if (mainIdx == ownerIdx) {
