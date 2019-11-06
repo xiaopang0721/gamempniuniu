@@ -231,7 +231,7 @@ module gamempniuniu.page {
         }
 
         //更新发牌动画
-        private onUpdateAniDeal(status: number): void {
+        private onUpdateAniDeal(): void {
             this._viewUI.paixie.ani2.gotoAndStop(0);
         }
 
@@ -886,9 +886,9 @@ module gamempniuniu.page {
                     break;
                 case MAP_STATUS.PLAY_STATUS_PUSH_TWO:// 发2张阶段
                     this._viewUI.paixie.ani2.play(0, true);
+                    Laya.timer.once(300 * this.getUnitCount(), this, this.onUpdateAniDeal);
                     break;
                 case MAP_STATUS.PLAY_STATUS_TANPAI:// 摊牌阶段
-                    this._viewUI.paixie.ani2.gotoAndStop(0);
                     break;
                 case MAP_STATUS.PLAY_STATUS_COMPARE:// 比牌阶段
                     this._viewUI.txt_status.text = "比牌中";
