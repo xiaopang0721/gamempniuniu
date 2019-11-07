@@ -406,6 +406,7 @@ module gamempniuniu.page {
             if (this._bankerWinInfo.length == 2) {//庄家全输
                 return;
             }
+            logd("_bankerWinInfo", JSON.stringify(this._bankerWinInfo))
             this._game.playSound(Path_game_mpniuniu.music_mpniuniu + "piaoqian.mp3", false);
             let bankerPos = this._bankerIndex;
             for (let i: number = 0; i < this._bankerWinInfo.length / 2; i++) {
@@ -429,6 +430,7 @@ module gamempniuniu.page {
             if (this._bankerLoseInfo.length == 2) {//庄家通杀
                 return;
             }
+            logd("_bankerLoseInfo", JSON.stringify(this._bankerLoseInfo))
             this._game.playSound(Path_game_mpniuniu.music_mpniuniu + "piaoqian.mp3", false);
             let bankerPos = this._bankerIndex;
             for (let i: number = 0; i < this._bankerLoseInfo.length / 2; i++) {
@@ -835,6 +837,9 @@ module gamempniuniu.page {
             this._isPlaying = this._curStatus >= MAP_STATUS.PLAY_STATUS_GAME_SHUFFLE && this._curStatus < MAP_STATUS.PLAY_STATUS_SHOW_GAME;
             if (this._curStatus >= MAP_STATUS.PLAY_STATUS_GAME_SHUFFLE) {
                 this._viewUI.paixie.ani_chupai.gotoAndStop(12);
+            }
+            if (this._curStatus > MAP_STATUS.PLAY_STATUS_PUSH_THREE && this._curStatus < MAP_STATUS.PLAY_STATUS_PUSH_TWO) {
+                this._viewUI.paixie.ani2.gotoAndStop(0);
             }
             this._viewUI.box_tips.visible = false;
             switch (this._curStatus) {
