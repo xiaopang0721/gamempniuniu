@@ -319,7 +319,6 @@ module gamempniuniu.page {
                     if ((this._curStatus != MAP_STATUS.PLAY_STATUS_COMPARE && this._curStatus != MAP_STATUS.PLAY_STATUS_SETTLE) || this._niuStory.isReConnected) {
                         this.updateMoney();
                     }
-                    // this._playerList[index].img_isReady.visible = unit.IsReady() && status < 1;
                     if (unit.GetIdentity() == 1) {
                         this._bankerIndex = index;
                         if (this._niuStory.isReConnected && this._curStatus > MAP_STATUS.PLAY_STATUS_GET_BANKER && this._bankerRateList[index]) {
