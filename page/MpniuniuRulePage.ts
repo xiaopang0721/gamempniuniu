@@ -7,6 +7,7 @@ module gamempniuniu.page {
 		TYPE_CARD_LEIXING = 1,
 		TYPE_CARD_DAXIAO = 2,
 		TYPE_CARD_BEISHU = 3,
+		TYPE_SETTLE_COUNT = 4,
 	}
 	export class MpniuniuRulePage extends game.gui.base.Page {
 		private _viewUI: ui.nqp.game_ui.mpniuniu.QiangZhuangNN_GuiZeUI;
@@ -39,6 +40,11 @@ module gamempniuniu.page {
 			this._viewUI.panel_leixing.vScrollBarSkin = "";
 			this._viewUI.panel_leixing.vScrollBar.autoHide = true;
 			this._viewUI.panel_leixing.vScrollBar.elasticDistance = 100;
+
+			this._viewUI.panel_jiesuan.vScrollBarSkin = "";
+			this._viewUI.panel_jiesuan.vScrollBar.autoHide = true;
+			this._viewUI.panel_jiesuan.vScrollBar.elasticDistance = 100;
+
 			this._viewUI.btn_tab.selectHandler = Handler.create(this, this.selectHandler, null, false);
 			if (this.dataSource) {
 				this._viewUI.btn_tab.selectedIndex = this.dataSource;
@@ -50,6 +56,7 @@ module gamempniuniu.page {
 		private selectHandler(index: number): void {
 			this._viewUI.panel_wanfa.visible = this._viewUI.btn_tab.selectedIndex == TYEP_INDEX.TYPE_WANFA_JIESHAO;
 			this._viewUI.panel_leixing.visible = this._viewUI.btn_tab.selectedIndex == TYEP_INDEX.TYPE_CARD_LEIXING;
+			this._viewUI.panel_jiesuan.visible = this._viewUI.btn_tab.selectedIndex == TYEP_INDEX.TYPE_SETTLE_COUNT;
 			this._viewUI.txt_daxiao.visible = this._viewUI.btn_tab.selectedIndex == TYEP_INDEX.TYPE_CARD_DAXIAO;
 			this._viewUI.txt_beishu.visible = this._viewUI.btn_tab.selectedIndex == TYEP_INDEX.TYPE_CARD_BEISHU;
 		}
