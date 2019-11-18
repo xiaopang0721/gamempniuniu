@@ -65,7 +65,6 @@ module gamempniuniu.page {
 			if (WebConfig.needMusicPreload) {
 				this["__needLoadAsset"] = this["__needLoadAsset"].concat([
 					Path_game_mpniuniu.music_mpniuniu + "nn_bgm.mp3",
-					Path_game_mpniuniu.music_mpniuniu + "dianjipai.mp3",
 					Path_game_mpniuniu.music_mpniuniu + "gaipai.mp3",
 					Path_game_mpniuniu.music_mpniuniu + "kaishi.mp3",
 					Path_game_mpniuniu.music_mpniuniu + "niu0_1.mp3",
@@ -99,7 +98,6 @@ module gamempniuniu.page {
 					Path_game_mpniuniu.music_mpniuniu + "niu14_1.mp3",
 					Path_game_mpniuniu.music_mpniuniu + "niu14_2.mp3",
 					Path_game_mpniuniu.music_mpniuniu + "piaoqian.mp3",
-					Path_game_mpniuniu.music_mpniuniu + "pingpaiwancheng.mp3",
 					Path_game_mpniuniu.music_mpniuniu + "shengli.mp3",
 					Path_game_mpniuniu.music_mpniuniu + "shibai.mp3",
 					Path_game_mpniuniu.music_mpniuniu + "suidao.mp3",
