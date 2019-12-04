@@ -47,7 +47,7 @@ module gamempniuniu.page {
     const CARD_TYPE = ["没牛", "牛一", "牛二", "牛三", "牛四", "牛五", "牛六", "牛七", "牛八", "牛九", "牛牛", "四花牛", "五花牛", "炸弹", "五小牛"];    //牌型
     export class MpniuniuMapPage extends game.gui.base.Page {
         private _viewUI: ui.nqp.game_ui.mpniuniu.QiangZhuangNNUI;
-        private _kuangView: ui.nqp.game_ui.tongyong.effect.SuiJiUI;//随机庄家框特效
+        private _kuangView: ui.ajqp.game_ui.tongyong.effect.SuiJiUI;//随机庄家框特效
         private _niuMgr: MpniuniuMgr;//牛牛管理器
         private _niuStory: any;//牛牛剧情类
         private _niuMapInfo: MpniuniuMapInfo;//牛牛地图信息类
@@ -1135,7 +1135,7 @@ module gamempniuniu.page {
 
         private initView(): void {
             //界面UI
-            this._kuangView = new ui.nqp.game_ui.tongyong.effect.SuiJiUI();
+            this._kuangView = new ui.ajqp.game_ui.tongyong.effect.SuiJiUI();
             this._viewUI.box_tips.visible = false;
             this._viewUI.box_status.visible = false;
             this._viewUI.box_bankerRate.visible = false;
