@@ -12,7 +12,6 @@ module gamempniuniu.page {
 		private _player: any;
 		private _playerInfo: any;
 		private _niuMgr: MpniuniuMgr;
-		private _isRoomcardType: boolean;
 
 		constructor(v: Game, onOpenFunc?: Function, onCloseFunc?: Function) {
 			super(v, onOpenFunc, onCloseFunc);
@@ -63,14 +62,13 @@ module gamempniuniu.page {
 		protected onOpen(): void {
 			super.onOpen();
 			this.initRoomInfo();
-			this.initRoomcardMode();
 			this._viewUI.btn_xinshou.on(LEvent.CLICK, this, this.onBtnClickWithTween);
 			this._viewUI.btn_chuji.on(LEvent.CLICK, this, this.onBtnClickWithTween);
 			this._viewUI.btn_zhongji.on(LEvent.CLICK, this, this.onBtnClickWithTween);
 			this._viewUI.btn_gaoji.on(LEvent.CLICK, this, this.onBtnClickWithTween);
 			this._viewUI.btn_join.on(LEvent.CLICK, this, this.onBtnClickWithTween);
 
-			(this._viewUI.view as TongyongHudNqpPage).onOpen(this._game, MpniuniuPageDef.GAME_NAME, this._isRoomcardType);
+			(this._viewUI.view as TongyongHudNqpPage).onOpen(this._game, MpniuniuPageDef.GAME_NAME, false);
 			this._game.playMusic(Path_game_mpniuniu.music_mpniuniu + "nn_bgm.mp3");
 
 			for (let index = 0; index < this._viewUI.box_right.numChildren; index++) {
@@ -88,11 +86,6 @@ module gamempniuniu.page {
 			for (let index = 0; index < this._leastClipList.length; index++) {
 				this._leastClipList[index] && this._leastClipList[index].setText(this._leastTmep[index], true);
 			}
-		}
-
-		/** 房卡模式下的布局 */
-		private initRoomcardMode() {
-			this._viewUI.box_normal.visible = !this._isRoomcardType;
 		}
 
 		protected onBtnTweenEnd(e: any, target: any): void {
@@ -128,14 +121,14 @@ module gamempniuniu.page {
 					}
 					this._game.sceneObjectMgr.intoStory(MpniuniuPageDef.GAME_NAME, Web_operation_fields.GAME_ROOM_CONFIG_MPNIUNIU_4.toString());
 					break;
-				case this._viewUI.btn_join:
-					let maplv = TongyongUtil.getJoinMapLv(MpniuniuPageDef.GAME_NAME, this._player.playerInfo.money);
-					if (!maplv) {
-						this.showTipsBox(this._leastTmep[0]);
-						return;
-					}
-					this._game.sceneObjectMgr.intoStory(MpniuniuPageDef.GAME_NAME, maplv.toString());
-					break;
+				// case this._viewUI.btn_join:
+				// 	let maplv = TongyongUtil.getJoinMapLv(MpniuniuPageDef.GAME_NAME, this._player.playerInfo.money);
+				// 	if (!maplv) {
+				// 		this.showTipsBox(this._leastTmep[0]);
+				// 		return;
+				// 	}
+				// 	this._game.sceneObjectMgr.intoStory(MpniuniuPageDef.GAME_NAME, maplv.toString());
+				// 	break;
 				default:
 					break;
 			}
