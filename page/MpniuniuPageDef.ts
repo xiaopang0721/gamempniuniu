@@ -47,13 +47,9 @@ module gamempniuniu.page {
 				PathGameTongyong.atlas_game_ui_tongyong + "general/effect/fapai_1.atlas",
 				PathGameTongyong.atlas_game_ui_tongyong + "general/effect/xipai.atlas",
 				Path_game_mpniuniu.ui_mpniuniu + "sk/mpnn_0.png",
-				Path_game_mpniuniu.ui_mpniuniu + "sk/mpnn_0.sk",
 				Path_game_mpniuniu.ui_mpniuniu + "sk/mpnn_1.png",
-				Path_game_mpniuniu.ui_mpniuniu + "sk/mpnn_1.sk",
 				Path_game_mpniuniu.ui_mpniuniu + "sk/mpnn_2.png",
-				Path_game_mpniuniu.ui_mpniuniu + "sk/mpnn_2.sk",
 				Path_game_mpniuniu.ui_mpniuniu + "sk/mpnn_3.png",
-				Path_game_mpniuniu.ui_mpniuniu + "sk/mpnn_3.sk",
 
 				PathGameTongyong.atlas_game_ui_tongyong + "dating.atlas",
 				PathGameTongyong.atlas_game_ui_tongyong + "logo.atlas",
