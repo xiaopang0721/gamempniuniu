@@ -14,8 +14,7 @@ module gamempniuniu.story {
 		PLAY_STATUS_TANPAI = 8, // 摊牌阶段
 		PLAY_STATUS_COMPARE = 9, // 比牌阶段
 		PLAY_STATUS_SETTLE = 10, // 结算阶段
-		PLAY_STATUS_SETTLE_INFO = 11, // 显示结算信息
-		PLAY_STATUS_SHOW_GAME = 12 // 本局展示阶段
+		PLAY_STATUS_SHOW_GAME = 11 // 本局展示阶段
 	}
 	export class MpniuniuStory extends gamecomponent.story.StoryNormalBase {
 		private _niuMgr: MpniuniuMgr;
@@ -126,9 +125,6 @@ module gamempniuniu.story {
 					this._niuMgr.gaipai();
 					break;
 				case MAP_STATUS.PLAY_STATUS_SETTLE:// 结算阶段
-
-					break;
-				case MAP_STATUS.PLAY_STATUS_SETTLE_INFO:// 显示结算信息
 
 					break;
 				case MAP_STATUS.PLAY_STATUS_SHOW_GAME:// 本局展示阶段

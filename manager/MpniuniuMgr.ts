@@ -261,7 +261,7 @@ module gamempniuniu.manager {
 									card.targe_pos = new Vector2();
 								}
 								card.isFinalPos = false;
-								card.targe_pos.y = card.targe_pos.y + 20;
+								card.targe_pos.y = card.targe_pos.y - 20;
 							}
 						}
 					}
@@ -270,61 +270,6 @@ module gamempniuniu.manager {
 				}
 			}
 		}
-
-		// resetValue(infos: any) {
-		// 	if (!this._cards.length) return;
-		// 	if (this._isShowOver) return;
-		// 	let mainUnit: Unit = this._game.sceneObjectMgr.mainUnit;
-		// 	if (!mainUnit || !mainUnit.GetIndex()) return;
-		// 	if (!this._cards.length) return;
-		// 	let cards = this._cards;//牌堆
-		// 	let idx = mainUnit.GetIndex();
-		// 	let unitnum = this.getPlayerOnSeat();
-		// 	let max = 5;
-		// 	let count = 0;
-		// 	this._unitIndexOnTable = [];
-		// 	for (let index = 0; index < max; index++) {//ui座位
-		// 		let posIdx = (idx + index) % max == 0 ? max : (idx + index) % max;
-		// 		let unit = this._game.sceneObjectMgr.getUnitByIdx(posIdx);
-		// 		if (unit) {
-		// 			this._unitIndexOnTable.push(index);
-		// 			for (let i = 0; i < infos.length; i++) {
-		// 				if (unit.GetIndex() == infos[i].SeatIndex) {
-		// 					let _cardsInfo = infos[i].Cards;
-		// 					let _cards = [];
-		// 					for (let k: number = 0; k < _cardsInfo.length; k++) {
-		// 						_cards.push(_cardsInfo[k]);//用新数组存下来，方便调整牌序
-		// 					}
-		// 					let isNiu = this.checkCardsType(_cards);
-		// 					_cards = this.sortCardsToNiu(_cards);
-		// 					for (let j = 0; j < max; j++) {//手牌
-		// 						let card: MpniuniuData;
-		// 						if (j < 3) {
-		// 							card = cards[unitnum * 3 + count * 2 + (j - 3)] as MpniuniuData;
-		// 						} else {
-		// 							card = cards[unitnum * 3 + count * 2 + (j - 3)] as MpniuniuData;
-		// 						}
-		// 						let _card = _cards[j];
-		// 						card.Init(_card.GetVal());
-		// 						card.index = j;
-		// 						card.sortScore = max - j;
-		// 						if (isNiu && j > 2) {
-		// 							if (!card.targe_pos) {
-		// 								card.targe_pos = new Vector2();
-		// 							}
-		// 							card.isFinalPos = false;
-		// 							card.targe_pos.y = card.targe_pos.y + 20;
-		// 						}
-		// 					}
-		// 					count++;
-		// 				}
-		// 			}
-		// 		}
-		// 	}
-		// 	this.rekaipai();
-		// 	this.removeCard();
-		// 	this._isShowOver = true;
-		// }
 
 		private getPlayerOnSeat(): number {
 			let unitNum = 0
@@ -476,21 +421,6 @@ module gamempniuniu.manager {
 				card.fanpai();
 			}
 		}
-
-		// //摊牌
-		// tanpai(index: number) {
-		// 	let unitnum = this.getPlayerOnSeat();
-		// 	for (let i = 0; i < 5; i++) {
-		// 		let card: MpniuniuData;
-		// 		if (i < 3) {
-		// 			card = this._cards[index * 3 + i] as MpniuniuData;
-		// 		} else {
-		// 			card = this._cards[unitnum * 3 + index * 3 + (i - 3)] as MpniuniuData;
-		// 		}
-		// 		if (!card) return;
-		// 		card.kaipai();
-		// 	}
-		// }
 
 		//牛牌最后两张向下移动
 		moveCard(index: number) {

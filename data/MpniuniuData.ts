@@ -7,7 +7,7 @@ module gamempniuniu.data {
 		private _isFan: boolean = false;
 		private _ownerIdx: number;
 		private _b: boolean;
-		private _posList: any = [[430, 630, 110], [980, 370, 28], [780, 230, 28], [405, 230, 28], [220, 370, 28]];
+		private _posList: any = [[430, 630, 110], [980, 390, 28], [780, 250, 28], [405, 250, 28], [220, 390, 28]];
 		private _mainIdx: number;
 		private _cardIdx: number;
 
@@ -95,7 +95,7 @@ module gamempniuniu.data {
 			let idx = this._ownerIdx;
 			let posIdx = (idx - this._mainIdx + 5) % 5;
 			let posX = posIdx == 0 ? 590 : this._posList[posIdx][0];
-			let posY = posIdx == 0 ? 485 : this._posList[posIdx][1];
+			let posY = posIdx == 0 ? 510 : this._posList[posIdx][1];
 			let space = posIdx == 0 ? 28 : this._posList[posIdx][2];
 			if (!this.targe_pos) {
 				this.targe_pos = new Vector2();
@@ -118,7 +118,7 @@ module gamempniuniu.data {
 			this.toggleEnable = false;
 			this.isFinalPos = false;
 			this.targe_pos.x = 590 + this._cardIdx * 28;
-			this.targe_pos.y = 485;
+			this.targe_pos.y = 510;
 			this.size = 0.65;
 			if(!this.pos) return;
 			Laya.Tween.to(this.pos, { x: this.targe_pos.x, y: this.targe_pos.y }, this.time_interval);

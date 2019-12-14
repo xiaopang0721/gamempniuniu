@@ -3,12 +3,9 @@
 */
 module gamempniuniu.page {
 	export class MpniuniuPage extends game.gui.base.Page {
-		private _viewUI: ui.nqp.game_ui.mpniuniu.QiangZhuangNN_HUDUI;
+		private _viewUI: ui.ajqp.game_ui.mpniuniu.QiangZhuangNN_HUDUI;
 		private _difenTmep: any = [1, 10, 50, 100];
 		private _leastTmep: any = [20, 200, 500, 1000];
-		private _difenClipList: ClipUtil[] = [];
-		private _leastClipList: ClipUtil[] = [];
-		private _clipArr: any[] = [ClipUtil.HUD_FONT0, ClipUtil.HUD_FONT1, ClipUtil.HUD_FONT2, ClipUtil.HUD_FONT3];
 		private _player: any;
 		private _playerInfo: any;
 		private _niuMgr: MpniuniuMgr;
@@ -22,10 +19,8 @@ module gamempniuniu.page {
 				PathGameTongyong.atlas_game_ui_tongyong + "hud.atlas",
 				PathGameTongyong.atlas_game_ui_tongyong + "dating.atlas",
 				PathGameTongyong.atlas_game_ui_tongyong + "logo.atlas",
-				Path_game_mpniuniu.ui_mpniuniu + "sk/mpnn_0.png",
-				Path_game_mpniuniu.ui_mpniuniu + "sk/mpnn_1.png",
-				Path_game_mpniuniu.ui_mpniuniu + "sk/mpnn_2.png",
-				Path_game_mpniuniu.ui_mpniuniu + "sk/mpnn_3.png",
+				PathGameTongyong.atlas_game_ui_tongyong_general + "anniu.atlas",
+				PathGameTongyong.atlas_game_ui_tongyong_general_effect + "anniug.atlas",
 			];
 			this._isNeedDuang = false;
 		}
@@ -39,23 +34,6 @@ module gamempniuniu.page {
 			for (let index = 0; index < this._viewUI.box_right.numChildren; index++) {
 				this._viewUI.box_right._childs[index].visible = false;
 			}
-			for (let index = 0; index < 4; index++) {
-				if (!this._difenClipList[index]) {
-					this._difenClipList[index] = new ClipUtil(this._clipArr[index]);
-					this._difenClipList[index].x = this._viewUI["txt_difen" + index].x;
-					this._difenClipList[index].y = this._viewUI["txt_difen" + index].y;
-					this._viewUI["txt_difen" + index].parent && this._viewUI["txt_difen" + index].parent.addChild(this._difenClipList[index]);
-					this._viewUI["txt_difen" + index].removeSelf();
-				}
-				if (!this._leastClipList[index]) {
-					this._leastClipList[index] = new ClipUtil(this._clipArr[index]);
-					this._leastClipList[index].x = this._viewUI["txt_least" + index].x;
-					this._leastClipList[index].y = this._viewUI["txt_least" + index].y;
-					this._leastClipList[index].scale(0.8, 0.8);
-					this._viewUI["txt_least" + index].parent && this._viewUI["txt_least" + index].parent.addChild(this._leastClipList[index]);
-					this._viewUI["txt_least" + index].removeSelf();
-				}
-			}
 		}
 
 		// 页面打开时执行函数
@@ -66,7 +44,6 @@ module gamempniuniu.page {
 			this._viewUI.btn_chuji.on(LEvent.CLICK, this, this.onBtnClickWithTween);
 			this._viewUI.btn_zhongji.on(LEvent.CLICK, this, this.onBtnClickWithTween);
 			this._viewUI.btn_gaoji.on(LEvent.CLICK, this, this.onBtnClickWithTween);
-			this._viewUI.btn_join.on(LEvent.CLICK, this, this.onBtnClickWithTween);
 
 			(this._viewUI.view as TongyongHudPage).onOpen(this._game, MpniuniuPageDef.GAME_NAME, false);
 			this._game.playMusic(Path_game_mpniuniu.music_mpniuniu + "nn_bgm.mp3");
@@ -74,17 +51,17 @@ module gamempniuniu.page {
 			for (let index = 0; index < this._viewUI.box_right.numChildren; index++) {
 				this._viewUI.box_right._childs[index].visible = true;
 				Laya.Tween.from(this._viewUI.box_right._childs[index], {
-					right: -300
+					x: 1280
 				}, 200 + index * 100, Laya.Ease.linearNone);
 			}
 		}
 
 		private initRoomInfo(): void {
-			for (let index = 0; index < this._difenClipList.length; index++) {
-				this._difenClipList[index] && this._difenClipList[index].setText(this._difenTmep[index], true);
+			for (let i: number = 0; i < this._difenTmep.length; i++) {
+				this._viewUI["txt_difen" + i].text = "" + this._difenTmep[i];
 			}
-			for (let index = 0; index < this._leastClipList.length; index++) {
-				this._leastClipList[index] && this._leastClipList[index].setText(this._leastTmep[index], true);
+			for (let i: number = 0; i < this._leastTmep.length; i++) {
+				this._viewUI["txt_least" + i].text = "" + this._leastTmep[i];
 			}
 		}
 
@@ -121,14 +98,6 @@ module gamempniuniu.page {
 					}
 					this._game.sceneObjectMgr.intoStory(MpniuniuPageDef.GAME_NAME, Web_operation_fields.GAME_ROOM_CONFIG_MPNIUNIU_4.toString());
 					break;
-				// case this._viewUI.btn_join:
-				// 	let maplv = TongyongUtil.getJoinMapLv(MpniuniuPageDef.GAME_NAME, this._player.playerInfo.money);
-				// 	if (!maplv) {
-				// 		this.showTipsBox(this._leastTmep[0]);
-				// 		return;
-				// 	}
-				// 	this._game.sceneObjectMgr.intoStory(MpniuniuPageDef.GAME_NAME, maplv.toString());
-				// 	break;
 				default:
 					break;
 			}
@@ -148,7 +117,6 @@ module gamempniuniu.page {
 				this._viewUI.btn_chuji.off(LEvent.CLICK, this, this.onBtnClickWithTween);
 				this._viewUI.btn_zhongji.off(LEvent.CLICK, this, this.onBtnClickWithTween);
 				this._viewUI.btn_gaoji.off(LEvent.CLICK, this, this.onBtnClickWithTween);
-				this._viewUI.btn_join.off(LEvent.CLICK, this, this.onBtnClickWithTween);
 				this._game.stopMusic();
 			}
 			super.close();

@@ -12,12 +12,10 @@ module gamempniuniu.page {
 		static PAGE_NIUNIU_BEGIN: string = "3";
 		//牛牛胜利动画界面
 		static PAGE_NIUNIU_WIN: string = "4";
-		//牛牛失败动画界面
-		static PAGE_NIUNIU_LOSE: string = "5";
 		//牛牛游戏通杀界面
-		static PAGE_NIUNIU_TONGSHA: string = "6";
+		static PAGE_NIUNIU_TONGSHA: string = "5";
 		//牛牛游戏通赔界面
-		static PAGE_NIUNIU_TONGPEI: string = "7";
+		static PAGE_NIUNIU_TONGPEI: string = "6";
 
 		//牛牛游戏规则界面
 		static PAGE_NIUNIU_RULE: string = "101";
@@ -29,7 +27,6 @@ module gamempniuniu.page {
 			PageDef._pageClassMap[MpniuniuPageDef.PAGE_NIUNIU_MAP] = MpniuniuMapPage;
 			PageDef._pageClassMap[MpniuniuPageDef.PAGE_NIUNIU_BEGIN] = MpniuniuBeginPage;
 			PageDef._pageClassMap[MpniuniuPageDef.PAGE_NIUNIU_WIN] = MpniuniuWinPage;
-			PageDef._pageClassMap[MpniuniuPageDef.PAGE_NIUNIU_LOSE] = MpniuniuLosePage;
 			PageDef._pageClassMap[MpniuniuPageDef.PAGE_NIUNIU_RULE] = MpniuniuRulePage;
 			PageDef._pageClassMap[MpniuniuPageDef.PAGE_NIUNIU_TONGSHA] = MpniuniuTongShaPage;
 			PageDef._pageClassMap[MpniuniuPageDef.PAGE_NIUNIU_TONGPEI] = MpniuniuTongPeiPage;
@@ -37,23 +34,27 @@ module gamempniuniu.page {
 
 			this["__needLoadAsset"] = [
 				DatingPath.atlas_dating_ui + "qifu.atlas",
+				Path_game_mpniuniu.atlas_game_ui + "mpniuniu.atlas",
+				Path_game_mpniuniu.atlas_game_ui_mpniuniu + "qp.atlas",
+                Path_game_mpniuniu.atlas_game_ui_mpniuniu + "niupai.atlas",
 				PathGameTongyong.atlas_game_ui_tongyong + "hud.atlas",
 				PathGameTongyong.atlas_game_ui_tongyong + "pai.atlas",
 				PathGameTongyong.atlas_game_ui_tongyong + "general.atlas",
 				PathGameTongyong.atlas_game_ui_tongyong + "touxiang.atlas",
+				PathGameTongyong.atlas_game_ui_tongyong + "dating.atlas",
+				PathGameTongyong.atlas_game_ui_tongyong + "logo.atlas",
 				PathGameTongyong.atlas_game_ui_tongyong + "qz.atlas",
-				Path_game_mpniuniu.atlas_game_ui + "mpniuniu.atlas",
 				PathGameTongyong.atlas_game_ui_tongyong + "qifu.atlas",
+				PathGameTongyong.atlas_game_ui_tongyong + "zjts.atlas",
+				PathGameTongyong.atlas_game_ui_tongyong + "zjtp.atlas",
+				PathGameTongyong.atlas_game_ui_tongyong + "nyl.atlas",
+				PathGameTongyong.atlas_game_ui_tongyong + "chongzhi.atlas",
 				PathGameTongyong.atlas_game_ui_tongyong + "general/effect/suiji.atlas",
 				PathGameTongyong.atlas_game_ui_tongyong + "general/effect/fapai_1.atlas",
 				PathGameTongyong.atlas_game_ui_tongyong + "general/effect/xipai.atlas",
-				Path_game_mpniuniu.ui_mpniuniu + "sk/mpnn_0.png",
-				Path_game_mpniuniu.ui_mpniuniu + "sk/mpnn_1.png",
-				Path_game_mpniuniu.ui_mpniuniu + "sk/mpnn_2.png",
-				Path_game_mpniuniu.ui_mpniuniu + "sk/mpnn_3.png",
+				PathGameTongyong.atlas_game_ui_tongyong_general + "anniu.atlas",
+				PathGameTongyong.atlas_game_ui_tongyong_general_effect + "anniug.atlas",
 
-				PathGameTongyong.atlas_game_ui_tongyong + "dating.atlas",
-				PathGameTongyong.atlas_game_ui_tongyong + "logo.atlas",
 				Path.custom_atlas_scene + 'card.atlas',
 				Path.map + 'pz_mpniuniu.png',
 				Path.map_far + 'bg_mpniuniu.jpg',
