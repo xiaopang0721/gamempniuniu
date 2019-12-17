@@ -62,6 +62,10 @@ module gamempniuniu.manager {
 			this._isReconnect = v;
 		}
 
+		get isGaiPai() {
+			return this._isGaiPai;
+		}
+
 		//对牌进行排序
 		SortCards(cards: any[]) {
 			if (!cards) return;
@@ -364,7 +368,7 @@ module gamempniuniu.manager {
 			let counter = 0;
 			for (let j: number = 0; j < 3; j++) {
 				for (let i: number = 0; i < this._cards.length / 3; i++) {
-					Laya.timer.once(150 * count, this, () => {
+					Laya.timer.once(130 * count, this, () => {
 						this._game.playSound(PathGameTongyong.music_tongyong + "fapai.mp3", false);
 						let card = this._cards[i * 3 + j];
 						if (!card) return;
