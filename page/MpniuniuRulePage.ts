@@ -33,14 +33,6 @@ module gamempniuniu.page {
 		// 页面打开时执行函数
 		protected onOpen(): void {
 			super.onOpen();
-			this._viewUI.panel_wanfa.vScrollBarSkin = "";
-			this._viewUI.panel_wanfa.vScrollBar.autoHide = true;
-			this._viewUI.panel_wanfa.vScrollBar.elasticDistance = 100;
-
-			this._viewUI.panel_leixing.vScrollBarSkin = "";
-			this._viewUI.panel_leixing.vScrollBar.autoHide = true;
-			this._viewUI.panel_leixing.vScrollBar.elasticDistance = 100;
-
 			this._viewUI.panel_jiesuan.vScrollBarSkin = "";
 			this._viewUI.panel_jiesuan.vScrollBar.autoHide = true;
 			this._viewUI.panel_jiesuan.vScrollBar.elasticDistance = 100;
@@ -54,8 +46,8 @@ module gamempniuniu.page {
 		}
 
 		private selectHandler(index: number): void {
-			this._viewUI.panel_wanfa.visible = this._viewUI.btn_tab.selectedIndex == TYEP_INDEX.TYPE_WANFA_JIESHAO;
-			this._viewUI.panel_leixing.visible = this._viewUI.btn_tab.selectedIndex == TYEP_INDEX.TYPE_CARD_LEIXING;
+			this._viewUI.img_wanfa.visible = this._viewUI.btn_tab.selectedIndex == TYEP_INDEX.TYPE_WANFA_JIESHAO;
+			this._viewUI.img_leixing.visible = this._viewUI.btn_tab.selectedIndex == TYEP_INDEX.TYPE_CARD_LEIXING;
 			this._viewUI.panel_jiesuan.visible = this._viewUI.btn_tab.selectedIndex == TYEP_INDEX.TYPE_SETTLE_COUNT;
 			this._viewUI.txt_daxiao.visible = this._viewUI.btn_tab.selectedIndex == TYEP_INDEX.TYPE_CARD_DAXIAO;
 			this._viewUI.txt_beishu.visible = this._viewUI.btn_tab.selectedIndex == TYEP_INDEX.TYPE_CARD_BEISHU;

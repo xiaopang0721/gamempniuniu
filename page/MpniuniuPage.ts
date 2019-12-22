@@ -57,11 +57,11 @@ module gamempniuniu.page {
 		}
 
 		private initRoomInfo(): void {
-			for (let i: number = 0; i < this._difenTmep.length; i++) {
-				this._viewUI["txt_difen" + i].text = "" + this._difenTmep[i];
+			for (let index = 0; index < this._difenTmep.length; index++) {
+				this._viewUI["txt_difen" + index].text = this._difenTmep[index] + "";
 			}
-			for (let i: number = 0; i < this._leastTmep.length; i++) {
-				this._viewUI["txt_least" + i].text = "" + this._leastTmep[i];
+			for (let index = 0; index < this._leastTmep.length; index++) {
+				this._viewUI["txt_least" + index].text = this._leastTmep[index] + "";
 			}
 		}
 
