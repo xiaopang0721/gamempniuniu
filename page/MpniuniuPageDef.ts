@@ -10,12 +10,6 @@ module gamempniuniu.page {
 		static PAGE_NIUNIU_MAP: string = "2";
 		//牛牛开始游戏动画界面
 		static PAGE_NIUNIU_BEGIN: string = "3";
-		//牛牛胜利动画界面
-		static PAGE_NIUNIU_WIN: string = "4";
-		//牛牛游戏通杀界面
-		static PAGE_NIUNIU_TONGSHA: string = "5";
-		//牛牛游戏通赔界面
-		static PAGE_NIUNIU_TONGPEI: string = "6";
 
 		//牛牛游戏规则界面
 		static PAGE_NIUNIU_RULE: string = "101";
@@ -26,10 +20,7 @@ module gamempniuniu.page {
 			PageDef._pageClassMap[MpniuniuPageDef.PAGE_NIUNIU] = MpniuniuPage;
 			PageDef._pageClassMap[MpniuniuPageDef.PAGE_NIUNIU_MAP] = MpniuniuMapPage;
 			PageDef._pageClassMap[MpniuniuPageDef.PAGE_NIUNIU_BEGIN] = MpniuniuBeginPage;
-			PageDef._pageClassMap[MpniuniuPageDef.PAGE_NIUNIU_WIN] = MpniuniuWinPage;
 			PageDef._pageClassMap[MpniuniuPageDef.PAGE_NIUNIU_RULE] = MpniuniuRulePage;
-			PageDef._pageClassMap[MpniuniuPageDef.PAGE_NIUNIU_TONGSHA] = MpniuniuTongShaPage;
-			PageDef._pageClassMap[MpniuniuPageDef.PAGE_NIUNIU_TONGPEI] = MpniuniuTongPeiPage;
 
 
 			this["__needLoadAsset"] = [
