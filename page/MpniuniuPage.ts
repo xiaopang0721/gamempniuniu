@@ -40,10 +40,10 @@ module gamempniuniu.page {
 		protected onOpen(): void {
 			super.onOpen();
 			this.initRoomInfo();
-			this._viewUI.btn_xinshou.on(LEvent.CLICK, this, this.onBtnClickWithTween);
-			this._viewUI.btn_chuji.on(LEvent.CLICK, this, this.onBtnClickWithTween);
-			this._viewUI.btn_zhongji.on(LEvent.CLICK, this, this.onBtnClickWithTween);
-			this._viewUI.btn_gaoji.on(LEvent.CLICK, this, this.onBtnClickWithTween);
+			// this._viewUI.btn_xinshou.on(LEvent.CLICK, this, this.onBtnClickWithTween);
+			// this._viewUI.btn_chuji.on(LEvent.CLICK, this, this.onBtnClickWithTween);
+			// this._viewUI.btn_zhongji.on(LEvent.CLICK, this, this.onBtnClickWithTween);
+			// this._viewUI.btn_gaoji.on(LEvent.CLICK, this, this.onBtnClickWithTween);
 
 			(this._viewUI.view as TongyongHudPage).onOpen(this._game, MpniuniuPageDef.GAME_NAME, false);
 			this._game.playMusic(Path_game_mpniuniu.music_mpniuniu + "nn_bgm.mp3");
@@ -52,7 +52,9 @@ module gamempniuniu.page {
 				this._viewUI.box_right._childs[index].visible = true;
 				Laya.Tween.from(this._viewUI.box_right._childs[index], {
 					x: 1280
-				}, 200 + index * 100, Laya.Ease.linearNone);
+				}, 200 + index * 100, Laya.Ease.linearNone, Handler.create(this, () => {
+					this._viewUI.box_right._childs[index].on(LEvent.CLICK, this, this.onBtnClickWithTween);
+				}));
 			}
 		}
 
