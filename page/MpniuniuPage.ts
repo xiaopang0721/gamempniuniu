@@ -109,7 +109,7 @@ module gamempniuniu.page {
 			this._game.alert(StringU.substitute("老板，您的金币少于{0}哦~\n补充点金币去大杀四方吧~", limit), () => {
 				this._game.uiRoot.general.open(DatingPageDef.PAGE_CHONGZHI);
 			}, () => {
-			}, true);
+			}, true, Tips.TIPS_SKIN_STR["cz"]);
 		}
 
 		public close(): void {
